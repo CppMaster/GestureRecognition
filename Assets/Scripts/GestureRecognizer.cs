@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class GestureRecognizer : MonoBehaviour
 {
 
-    List<Vector2> pointArray;
+    public List<Vector2>[] pointArray = new List<Vector2>[5];
     public int maxPoints = 64;
     public float sizeOfScaleRect = 500f;
     public int compareDetail = 15;
@@ -14,25 +14,26 @@ public class GestureRecognizer : MonoBehaviour
 
     public int StartRecognizer(List<Vector2> points)
     {
-        pointArray = optimizeGesture(points, maxPoints);
-        Vector2 center = CalcCenterOfGesture(pointArray);
-        float radians = Mathf.Atan2(center.y - pointArray[0].y, center.x - pointArray[0].x);
-        pointArray = RotateGesture(pointArray, -radians, center);
-        pointArray = ScaleGesture(pointArray, sizeOfScaleRect);
-        pointArray = TranslateGestureToOrigin(pointArray);
-        gestureChosen = GestureMatch(pointArray);
+        pointArray[0] = points;
+        pointArray[1] = OptimizeGesture(points, maxPoints);
+        Vector2 center = CalcCenterOfGesture(pointArray[1]);
+        float radians = Mathf.Atan2(center.y - pointArray[1][0].y, center.x - pointArray[1][0].x);
+        pointArray[2] = RotateGesture(pointArray[1], -radians, center);
+        pointArray[3] = ScaleGesture(pointArray[2], sizeOfScaleRect);
+        pointArray[4] = TranslateGestureToOrigin(pointArray[3]);
+        gestureChosen = GestureMatch(pointArray[4]);
         return gestureChosen;
     }
 
-    public List<Vector2> optimizeGesture(List<Vector2> points, int maxPoints)
+    public List<Vector2> OptimizeGesture(List<Vector2> points, int maxPoints)
     {
-        float interval = CalcTotalGestureLength(pointArray) / (maxPoints - 1);
+        float interval = CalcTotalGestureLength(points) / (maxPoints - 1);
 
         List<Vector2> optimizedPoints = new List<Vector2>();
         optimizedPoints.Add(points[0]);
 
         float tempDistance = 0f;
-        for (int i = 0; i < points.Count; ++i)
+        for (int i = 1; i < points.Count; ++i)
         {
             float currentDistanceBetween2Ponts = CalcDistance(points[i - 1], points[i]);
 
@@ -57,7 +58,7 @@ public class GestureRecognizer : MonoBehaviour
 
         if (optimizedPoints.Count == maxPoints - 1)
         {
-            optimizedPoints.Add(points[pointArray.Count - 1]);
+            optimizedPoints.Add(points[points.Count - 1]);
         }
         return optimizedPoints;
 
@@ -65,11 +66,11 @@ public class GestureRecognizer : MonoBehaviour
 
     public List<Vector2> RotateGesture(List<Vector2> points, float radians, Vector2 center)
     {
-        List<Vector2> newArray = new List<Vector2>();
+        /*List<Vector2> newArray = new List<Vector2>();
         float cos = Mathf.Cos(radians);
         float sin = Mathf.Sin(radians);
 
-        for (int i = 0; i < pointArray.Count; ++i)
+        for (int i = 0; i < points.Count; ++i)
         {
             newArray.Add(new Vector2(
                 (points[i].x - center.x) * cos - (points[i].y - center.y) * sin + center.x,
@@ -77,7 +78,8 @@ public class GestureRecognizer : MonoBehaviour
                 ));
         }
 
-        return newArray;
+        return newArray; */
+        return points;
     }
 
     public List<Vector2> ScaleGesture(List<Vector2> points, float size)
@@ -92,7 +94,7 @@ public class GestureRecognizer : MonoBehaviour
             minX = Mathf.Min(minX, points[i].x);
             maxX = Mathf.Max(maxX, points[i].x);
             minY = Mathf.Min(minY, points[i].y);
-            maxY = Mathf.Max(minY, points[i].y);
+            maxY = Mathf.Max(maxY, points[i].y);
         }
 
         Rect boundingBox = new Rect(minX, minY, maxX - minX, maxY - minY);
@@ -148,7 +150,7 @@ public class GestureRecognizer : MonoBehaviour
         float halfDiagonal = 0.5f * Mathf.Pow(2, 0.5f) * sizeOfScaleRect;
         float score = 1f - tempDistance / halfDiagonal;
 
-        if (score < 0.7f)
+        if (score < 0.1f)
         {
             Debug.Log("No match! Score: " + score);
             return -1;
@@ -221,7 +223,7 @@ public class GestureRecognizer : MonoBehaviour
 
     public float CalcDistanceAtAngle(List<Vector2> points, List<Vector2> template, float radians)
     {
-        Vector2 center = CalcCenterOfGesture(pointArray);
+        Vector2 center = CalcCenterOfGesture(points);
         return CalcGestureTemplateDistance(RotateGesture(points, radians, center), template);
     }
 
@@ -230,7 +232,7 @@ public class GestureRecognizer : MonoBehaviour
         float distance = 0;
         for (int a = 0; a < points.Count; ++a)
         {
-            distance = CalcDistance(points[a], template[a]);
+            distance += CalcDistance(points[a], template[a]);
         }
         return distance / points.Count;
     }
