@@ -19,6 +19,6 @@ public class DrawGesture : MonoBehaviour
     [ContextMenu("DrawRecognizer")]
     public void DrawRecognizer()
     {
-        drawLine.SetPoints(recognizer.pointArray[getsureStep]);
+        drawLine.SetPoints(recognizer.GetStepPoints(getsureStep));
     }
 }
