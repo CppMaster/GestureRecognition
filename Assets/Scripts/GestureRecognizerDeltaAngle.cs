@@ -11,7 +11,7 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
 
         pointArray[0] = OptimizeGesture(points, maxPoints);
 
-        gestureChosen = GestureMatch(points);
+        gestureChosen = GestureMatch(pointArray[0]);
         return gestureChosen;
     }
 
@@ -31,8 +31,11 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
 
             for (int a = 0; a < deltaAngles.Length; ++a)
             {
-                diff += Mathf.Abs(Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[t] * Mathf.Rad2Deg));
+                float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[a] * Mathf.Rad2Deg);
+                diff += Mathf.Abs(deltaAngle);
             }
+
+            diff /= deltaAngles.Length;
 
             if (diff < minDiff)
             {
