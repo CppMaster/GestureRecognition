@@ -45,7 +45,7 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
 
         }
 
-        Debug.Log("Result: " + GestureTemplates.templateNames[minIndex] + " [" + minIndex + "], Score:" + minDiff);
+        Debug.Log("Result(a): " + GestureTemplates.templateNames[minIndex] + " [" + minIndex + "], Score:" + minDiff);
 
         return minIndex;
     }

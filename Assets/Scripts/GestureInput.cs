@@ -5,6 +5,7 @@ public class GestureInput : MonoBehaviour
 {
 
     public GestureRecognizer regonizer;
+    public DrawGesture drawGesture;
 
     List<Vector2> points = new List<Vector2>();
 
@@ -17,7 +18,11 @@ public class GestureInput : MonoBehaviour
         else
         {
             if (points.Count > 0)
+            {
                 regonizer.StartRecognizer(points);
+                if (drawGesture != null)
+                    drawGesture.DrawRecognizer();
+            }
             points.Clear();
         }
     }

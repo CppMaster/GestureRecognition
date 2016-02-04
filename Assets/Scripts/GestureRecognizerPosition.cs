@@ -114,7 +114,7 @@ public class GestureRecognizerPosition : GestureRecognizer
             return -1;
         }
 
-        Debug.Log("Result: " + GestureTemplates.templateNames[index] + " [" + index + "], Score:" + score);
+        Debug.Log("Result(p): " + GestureTemplates.templateNames[index] + " [" + index + "], Score:" + score);
         return index;
 
 
