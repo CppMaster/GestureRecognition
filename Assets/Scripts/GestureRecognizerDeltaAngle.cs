@@ -74,6 +74,54 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
                 }
             }
 
+            if (oppositeAngles)
+            {
+                for (int o = -maxOffset; o <= maxOffset; ++o)
+                {
+                    float diff = 0f;
+
+                    float[] templateDeltaAngles = GetDeltaAngles(new List<Vector2>(GestureTemplates.templates[t]), o);
+
+                    for (int a = 0; a < deltaAngles.Length; ++a)
+                    {
+                        float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[a] * Mathf.Rad2Deg);
+                        diff += Mathf.Abs(deltaAngle);
+                    }
+
+                    diff /= deltaAngles.Length;
+
+                    if (diff < minDiff)
+                    {
+                        minDiff = diff;
+                        minIndex = t;
+                    }
+                }
+
+                if (bothDirections)
+                {
+                    for (int o = -maxOffset; o <= maxOffset; ++o)
+                    {
+                        float diff = 0f;
+
+                        float[] templateDeltaAngles = GetDeltaAngles(new List<Vector2>(GestureTemplates.templates[t]), o);
+
+                        for (int a = 0; a < deltaAngles.Length; ++a)
+                        {
+                            float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[deltaAngles.Length - a - 1] * Mathf.Rad2Deg);
+                            diff += Mathf.Abs(deltaAngle);
+                        }
+
+                        diff /= deltaAngles.Length;
+
+                        if (diff < minDiff)
+                        {
+                            minDiff = diff;
+                            minIndex = t;
+                        }
+                    }
+                }
+            }
+
         }
 
         Debug.Log("Result(a): " + GestureTemplates.templateNames[minIndex] + " [" + minIndex + "], Score:" + minDiff);
