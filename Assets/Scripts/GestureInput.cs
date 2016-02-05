@@ -13,7 +13,7 @@ public class GestureInput : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            points.Add(Input.mousePosition);
+            points.Add((Vector2)Input.mousePosition - new Vector2(Screen.width, Screen.height) * 0.5f);
         }
         else
         {
