@@ -19,7 +19,7 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
         return gestureChosen;
     }
 
-    int GestureMatch(List<Vector2> points)
+    public int GestureMatch(List<Vector2> points)
     {
 
         float[] deltaAngles = GetDeltaAngles(points);
@@ -129,7 +129,7 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
         return minIndex;
     }
 
-    float[] GetDeltaAngles(List<Vector2> points, int offset = 0)
+    public float[] GetDeltaAngles(List<Vector2> points, int offset = 0)
     {
         float[] radians = new float[points.Count - 1];
         float[] deltaAngles = new float[radians.Length - 1];
