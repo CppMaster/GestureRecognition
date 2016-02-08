@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
+using System.IO;
+using System.Text;
 
 public class GestureLearning : MonoBehaviour
 {
 
     public const int pointsCount = 20;
+    public const int inputSize = pointsCount * 3;
+    public const int gestureCount = 6;
+    public const int wordsInLineCount = inputSize + gestureCount;
+    char[] learnDataSplitCharacters = new char[] { ' ', '|', '#' };
 
     NeuralNetwork.NeuralNetwork neuralNetwork;
     string learnDataFile = "learn.txt";
@@ -15,7 +22,7 @@ public class GestureLearning : MonoBehaviour
 
     void Awake()
     {
-        neuralNetwork = new NeuralNetwork.NeuralNetwork(pointsCount * 3, new int[] { 42, 24, 6 });
+        neuralNetwork = new NeuralNetwork.NeuralNetwork(inputSize, new int[] { 42, 24, 6 });
         LoadLearnData();
         LoadNetwork();
     }
@@ -23,13 +30,72 @@ public class GestureLearning : MonoBehaviour
     [ContextMenu("LoadLearnData")]
     public void LoadLearnData()
     {
+        try
+        {
+            if (!File.Exists(learnDataFile))
+                throw new Exception("Can't load file");
 
+            learnData = new List<NeuralNetworkIO>();
+
+            TextReader reader = File.OpenText(learnDataFile);
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] numbersStr = line.Split(learnDataSplitCharacters);
+                if (numbersStr.Length != wordsInLineCount)
+                {
+                    Debug.LogError("Incorrect number count in line:" + numbersStr.Length);
+                    continue;
+                }
+
+                NeuralNetworkIO data = new NeuralNetworkIO();
+                data.input = new float[inputSize];
+                data.output = new float[gestureCount];
+                for (int a = 0; a < wordsInLineCount; ++a)
+                {
+                    if (a < inputSize)
+                        data.input[a] = float.Parse(numbersStr[a]);
+                    else
+                        data.output[a - inputSize] = float.Parse(numbersStr[a]);
+
+                }
+
+                learnData.Add(data);
+            }
+
+            reader.Close();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogException(e);
+        }
     }
 
     [ContextMenu("SaveLearnData")]
     public void SaveLearnData()
     {
+        if (!File.Exists(learnDataFile))
+            File.Delete(learnDataFile);
 
+        StreamWriter writer = File.CreateText(learnDataFile);
+        foreach (NeuralNetworkIO data in learnData)
+        {
+            for (int a = 0; a < wordsInLineCount; ++a)
+            {
+                if (a < inputSize)
+                    writer.Write(data.input[a]);
+                else
+                    writer.Write(data.output[a - inputSize]);
+                if (a == pointsCount - 1 || a == pointsCount * 2 - 1)
+                    writer.Write("|");
+                if (a == pointsCount * 3 - 1)
+                    writer.Write("#");
+                else
+                    writer.Write(" ");
+            }
+            writer.WriteLine();
+        }
+        writer.Close();
     }
 
     [ContextMenu("LoadLearnData")]
