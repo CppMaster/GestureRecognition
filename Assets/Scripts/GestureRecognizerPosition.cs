@@ -23,6 +23,16 @@ public class GestureRecognizerPosition : GestureRecognizer
         return gestureChosen;
     }
 
+    public List<Vector2> NormalizeGesture(List<Vector2> points)
+    {
+        Vector2 center = CalcCenterOfGesture(points);
+        float radians = Mathf.Atan2(center.y - points[0].y, center.x - points[0].x);
+        points = RotateGesture(points, -radians, center);
+        points = ScaleGesture(points, sizeOfScaleRect);
+        points = TranslateGestureToOrigin(points);
+        return points;
+    }
+
     public List<Vector2> RotateGesture(List<Vector2> points, float radians, Vector2 center)
     {
         List<Vector2> newArray = new List<Vector2>();
