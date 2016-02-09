@@ -66,14 +66,15 @@ public class GestureRecognizerPosition : GestureRecognizer
         }
 
         Rect boundingBox = new Rect(minX, minY, maxX - minX, maxY - minY);
+        float factor = Mathf.Max(boundingBox.width, boundingBox.height);
 
         List<Vector2> newArray = new List<Vector2>();
 
         for (int i = 0; i < points.Count; ++i)
         {
             newArray.Add(new Vector2(
-                points[i].x * (size / boundingBox.width),
-                points[i].y * (size / boundingBox.height)
+                points[i].x * (size / factor),
+                points[i].y * (size / factor)
                 ));
         }
 

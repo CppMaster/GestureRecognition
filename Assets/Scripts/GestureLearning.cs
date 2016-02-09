@@ -17,7 +17,7 @@ public class GestureLearning : MonoBehaviour
     string learnDataFile = "learn.txt";
     string networkDataFile = "network.txt";
 
-    List<NeuralNetworkIO> learnData;
+    public List<NeuralNetworkIO> learnData;
 
 
     void Awake()

@@ -154,10 +154,10 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
 
     public static float NormalizeAngleTo01(float angle)
     {
-        if (angle < 0f)
-            angle += Mathf.PI;
-        if (angle > Mathf.PI * 2)
-            angle -= Mathf.PI;
-        return angle / Mathf.PI / 2;
+        if (angle < -Mathf.PI)
+            angle += Mathf.PI * 2;
+        if (angle > Mathf.PI)
+            angle -= Mathf.PI * 2;
+        return Mathf.Abs(angle / Mathf.PI);
     }
 }
