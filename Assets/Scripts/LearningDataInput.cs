@@ -44,6 +44,8 @@ public class LearningDataInput : MonoBehaviour
 
         data.output = new float[GestureLearning.gestureCount];
         data.output[gestureID] = 1f;
+
+        gestureLearning.Add(data);
     }
 
 }

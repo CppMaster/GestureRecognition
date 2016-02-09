@@ -32,10 +32,11 @@ public class GestureLearning : MonoBehaviour
     {
         try
         {
+            learnData = new List<NeuralNetworkIO>();
+
             if (!File.Exists(learnDataFile))
                 throw new Exception("Can't load file");
 
-            learnData = new List<NeuralNetworkIO>();
 
             TextReader reader = File.OpenText(learnDataFile);
             string line;
@@ -88,9 +89,9 @@ public class GestureLearning : MonoBehaviour
                     writer.Write(data.output[a - inputSize]);
                 if (a == pointsCount - 1 || a == pointsCount * 2 - 1)
                     writer.Write("|");
-                if (a == pointsCount * 3 - 1)
+                else if (a == pointsCount * 3 - 1)
                     writer.Write("#");
-                else
+                else if (a != wordsInLineCount - 1)
                     writer.Write(" ");
             }
             writer.WriteLine();
@@ -137,6 +138,7 @@ public class GestureLearning : MonoBehaviour
         return outputs;
     }
 
+    [ContextMenu("Learn")]
     public void Learn()
     {
         neuralNetwork.LearningAlg.Learn(GetInputs(), GetOutputs());
