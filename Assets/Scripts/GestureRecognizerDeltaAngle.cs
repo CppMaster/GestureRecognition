@@ -129,21 +129,29 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
         return minIndex;
     }
 
-    public static float[] GetDeltaAngles(List<Vector2> points, int offset = 0)
+    public static float[] GetRadians(List<Vector2> points)
     {
         float[] radians = new float[points.Count];
-        float[] deltaAngles = new float[radians.Length];
 
-        for (int a = 0; a < deltaAngles.Length; ++a)
+        for (int a = 0; a < points.Count; ++a)
         {
             Vector2 translation;
-            if (a < deltaAngles.Length - 1)
+            if (a < points.Count - 1)
                 translation = points[a + 1] - points[a];
             else
                 translation = points[a] - points[0];
 
             radians[a] = Mathf.Atan2(translation.y, translation.x);
         }
+
+        return radians;
+    }
+
+    public static float[] GetDeltaAngles(List<Vector2> points, int offset = 0)
+    {
+        float[] radians = GetRadians(points);
+        float[] deltaAngles = new float[radians.Length];
+
         for (int a = 0; a < deltaAngles.Length; ++a)
         {
             deltaAngles[a] = radians[(a + offset + deltaAngles.Length) % deltaAngles.Length] - radians[(a + 1 + offset + deltaAngles.Length) % deltaAngles.Length];
