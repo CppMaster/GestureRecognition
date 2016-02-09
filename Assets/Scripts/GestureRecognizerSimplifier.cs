@@ -5,9 +5,9 @@ public class GestureRecognizerSimplifier : GestureRecognizer
 {
 
     public float minAngle = 30f;
-    public int minEdge = 2;
+    public float minEdgeRatio = 0.1f;
 
-    public List<Vector2> SimplifyPoligon(List<Vector2> points)
+    public List<Vector2> RemoveSmallAngles(List<Vector2> points)
     {
 
         List<Vector2> result = new List<Vector2>();
@@ -30,11 +30,35 @@ public class GestureRecognizerSimplifier : GestureRecognizer
         return result;
     }
 
+    public List<Vector2> RemoveSmallEdges(List<Vector2> points)
+    {
+        float minEdgeLength = CalcTotalGestureLength(points) * minEdgeRatio;
+
+        List<Vector2> result = new List<Vector2>();
+        result.Add(points[0]);
+        for (int a = 1; a < points.Count; ++a)
+        {
+            float distance = CalcDistance(points[a], result[result.Count - 1]);
+            if (distance >= minEdgeLength)
+            {
+                result.Add(points[a]);
+            }
+            else
+            {
+                result.Add((points[a] + result[result.Count - 1]) / 2);
+                result.Remove(result[result.Count - 2]);
+            }
+        }
+
+        return result;
+    }
+
     public override int StartRecognizer(List<Vector2> points)
     {
         pointArray = new List<Vector2>[3];
         pointArray[0] = OptimizeGesture(points, maxPoints);
-        pointArray[1] = SimplifyPoligon(pointArray[0]);
+        pointArray[1] = RemoveSmallAngles(pointArray[0]);
+        pointArray[2] = RemoveSmallEdges(pointArray[1]);
         return base.StartRecognizer(points);
     }
 }

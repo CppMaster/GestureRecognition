@@ -63,7 +63,7 @@ public class GestureRecognizer : MonoBehaviour
 
     }
 
-    protected float CalcTotalGestureLength(List<Vector2> points)
+    public static float CalcTotalGestureLength(List<Vector2> points)
     {
         float length = 0f;
         for (int a = 1; a < points.Count; ++a)
@@ -73,7 +73,7 @@ public class GestureRecognizer : MonoBehaviour
         return length;
     }
 
-    protected float CalcDistance(Vector2 p1, Vector2 p2)
+    public static float CalcDistance(Vector2 p1, Vector2 p2)
     {
         return (p1 - p2).magnitude;
     }
