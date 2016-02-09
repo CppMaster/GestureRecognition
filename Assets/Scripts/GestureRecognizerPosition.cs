@@ -30,7 +30,7 @@ public class GestureRecognizerPosition : GestureRecognizer
         points = RotateGesture(points, -radians, center);
         points = ScaleGesture(points, sizeOfScaleRect);
         points = TranslateGestureToOrigin(points);
-        return points;
+        return ScaleValuesTo01(points);
     }
 
     public List<Vector2> RotateGesture(List<Vector2> points, float radians, Vector2 center)
@@ -92,6 +92,21 @@ public class GestureRecognizerPosition : GestureRecognizer
             newArray.Add(new Vector2(
                 points[i].x - center.x,
                 points[i].y - center.y
+                ));
+        }
+
+        return newArray;
+    }
+
+    public List<Vector2> ScaleValuesTo01(List<Vector2> points)
+    {
+        List<Vector2> newArray = new List<Vector2>();
+
+        for (int i = 0; i < points.Count; ++i)
+        {
+            newArray.Add(new Vector2(
+                (points[i].x + sizeOfScaleRect / 2) / sizeOfScaleRect,
+                (points[i].y + sizeOfScaleRect / 2) / sizeOfScaleRect
                 ));
         }
 

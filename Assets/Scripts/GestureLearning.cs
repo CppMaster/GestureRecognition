@@ -148,4 +148,15 @@ public class GestureLearning : MonoBehaviour
     {
         learnData.Add(data);
     }
+
+    public float[] Calculate(float[] input)
+    {
+        return neuralNetwork.Output(input);
+    }
+
+    [ContextMenu("ClearLearningData")]
+    public void ClearLearningData()
+    {
+        learnData.Clear();
+    }
 }
