@@ -90,9 +90,9 @@ public class GestureRecognizerSimplifier : GestureRecognizerDeltaAngle
                 for (int a = 0; a < deltaAngles.Length || a < templateDeltaAngles[t].Length; ++a)
                 {
                     if (a >= deltaAngles.Length)
-                        diff += templateDeltaAngles[t][a] * Mathf.Rad2Deg;
+                        diff += Mathf.Abs(templateDeltaAngles[t][a] * Mathf.Rad2Deg);
                     else if (a >= templateDeltaAngles[t].Length)
-                        diff += deltaAngles[a];
+                        diff += Mathf.Abs(deltaAngles[a] * Mathf.Rad2Deg);
                     else
                         diff += Mathf.Abs(Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[t][a] * Mathf.Rad2Deg));
                 }
@@ -106,16 +106,20 @@ public class GestureRecognizerSimplifier : GestureRecognizerDeltaAngle
                 }
             }
 
-            /*if (bothDirections)
+            if (bothDirections)
             {
                 for (int o = -maxOffset; o <= maxOffset; ++o)
                 {
                     float diff = 0f;
 
-                    for (int a = 0; a < deltaAngles.Length; ++a)
+                    for (int a = 0; a < deltaAngles.Length || a < templateDeltaAngles[t].Length; ++a)
                     {
-                        float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[deltaAngles.Length - a - 1] * Mathf.Rad2Deg);
-                        diff += Mathf.Abs(deltaAngle);
+                        if (a >= deltaAngles.Length)
+                            diff += Mathf.Abs(templateDeltaAngles[t][templateDeltaAngles[t].Length - a - 1]);
+                        else if (a >= templateDeltaAngles[t].Length)
+                            diff += Mathf.Abs(deltaAngles[a] * Mathf.Rad2Deg);
+                        else
+                            diff += Mathf.Abs(Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[t][templateDeltaAngles[t].Length - a - 1]));
                     }
 
                     diff /= deltaAngles.Length;
@@ -134,10 +138,14 @@ public class GestureRecognizerSimplifier : GestureRecognizerDeltaAngle
                 {
                     float diff = 0f;
 
-                    for (int a = 0; a < deltaAngles.Length; ++a)
+                    for (int a = 0; a < deltaAngles.Length || a < templateDeltaAngles[t].Length; ++a)
                     {
-                        float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[a] * Mathf.Rad2Deg);
-                        diff += Mathf.Abs(deltaAngle);
+                        if (a >= deltaAngles.Length)
+                            diff += Mathf.Abs(-templateDeltaAngles[t][a] * Mathf.Rad2Deg);
+                        else if (a >= templateDeltaAngles[t].Length)
+                            diff += Mathf.Abs(deltaAngles[a] * Mathf.Rad2Deg);
+                        else
+                            diff += Mathf.Abs(Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[t][a] * Mathf.Rad2Deg));
                     }
 
                     diff /= deltaAngles.Length;
@@ -155,10 +163,14 @@ public class GestureRecognizerSimplifier : GestureRecognizerDeltaAngle
                     {
                         float diff = 0f;
 
-                        for (int a = 0; a < deltaAngles.Length; ++a)
+                        for (int a = 0; a < deltaAngles.Length || a < templateDeltaAngles[t].Length; ++a)
                         {
-                            float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[deltaAngles.Length - a - 1] * Mathf.Rad2Deg);
-                            diff += Mathf.Abs(deltaAngle);
+                            if (a >= deltaAngles.Length)
+                                diff += Mathf.Abs(-templateDeltaAngles[t][templateDeltaAngles[t].Length - a - 1]);
+                            else if (a >= templateDeltaAngles[t].Length)
+                                diff += Mathf.Abs(deltaAngles[a] * Mathf.Rad2Deg);
+                            else
+                                diff += Mathf.Abs(Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[t][templateDeltaAngles[t].Length - a - 1]));
                         }
 
                         diff /= deltaAngles.Length;
@@ -170,7 +182,7 @@ public class GestureRecognizerSimplifier : GestureRecognizerDeltaAngle
                         }
                     }
                 }
-            } */
+            }
 
         }
 
