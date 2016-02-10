@@ -14,6 +14,11 @@ public class GestureRecognizer : MonoBehaviour
         return -1;
     }
 
+    public virtual int GestureMatch(List<Vector2> points)
+    {
+        return -1;
+    }
+
     public virtual List<Vector2> GetStepPoints(int _step)
     {
         return pointArray[_step];
@@ -78,4 +83,8 @@ public class GestureRecognizer : MonoBehaviour
         return (p1 - p2).magnitude;
     }
 
+    public virtual List<Vector2> Transform(List<Vector2> points)
+    {
+        return points;
+    }
 }

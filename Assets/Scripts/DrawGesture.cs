@@ -13,7 +13,7 @@ public class DrawGesture : MonoBehaviour
     [ContextMenu("DrawTemplate")]
     public void DrawTemplate()
     {
-        drawLine.SetPoints(new List<Vector2>(GestureTemplates.templates[templateIndex]));
+        drawLine.SetPoints(recognizer.Transform(new List<Vector2>(GestureTemplates.templates[templateIndex])));
     }
 
     [ContextMenu("DrawRecognizer")]

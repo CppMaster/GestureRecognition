@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class GestureRecognizerSimplifier : GestureRecognizer
+public class GestureRecognizerSimplifier : GestureRecognizerDeltaAngle
 {
 
     public float minAngle = 30f;
@@ -59,6 +59,123 @@ public class GestureRecognizerSimplifier : GestureRecognizer
         pointArray[0] = OptimizeGesture(points, maxPoints);
         pointArray[1] = RemoveSmallAngles(pointArray[0]);
         pointArray[2] = RemoveSmallEdges(pointArray[1]);
-        return base.StartRecognizer(points);
+        gestureChosen = GestureMatch(pointArray[2]);
+        return gestureChosen;
+    }
+
+    public override List<Vector2> Transform(List<Vector2> points)
+    {
+        return RemoveSmallEdges(RemoveSmallAngles(OptimizeGesture(points, maxPoints)));
+    }
+
+    public override int GestureMatch(List<Vector2> points)
+    {
+        float[] deltaAngles = GetDeltaAngles(points);
+
+        float[][] templateDeltaAngles = new float[GestureTemplates.templates.Length][];
+        for (int a = 0; a < GestureTemplates.templates.Length; ++a)
+        {
+            templateDeltaAngles[a] = GetDeltaAngles(Transform(new List<Vector2>(GestureTemplates.templates[a])));
+        }
+
+        float minDiff = Mathf.Infinity;
+        int minIndex = -1;
+
+        for (int t = 0; t < GestureTemplates.templates.Length; ++t)
+        {
+            for (int o = -maxOffset; o <= maxOffset; ++o)
+            {
+                float diff = 0f;
+
+                for (int a = 0; a < deltaAngles.Length || a < templateDeltaAngles[t].Length; ++a)
+                {
+                    if (a >= deltaAngles.Length)
+                        diff += templateDeltaAngles[t][a] * Mathf.Rad2Deg;
+                    else if (a >= templateDeltaAngles[t].Length)
+                        diff += deltaAngles[a];
+                    else
+                        diff += Mathf.Abs(Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[t][a] * Mathf.Rad2Deg));
+                }
+
+                diff /= deltaAngles.Length;
+
+                if (diff < minDiff)
+                {
+                    minDiff = diff;
+                    minIndex = t;
+                }
+            }
+
+            /*if (bothDirections)
+            {
+                for (int o = -maxOffset; o <= maxOffset; ++o)
+                {
+                    float diff = 0f;
+
+                    for (int a = 0; a < deltaAngles.Length; ++a)
+                    {
+                        float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, templateDeltaAngles[deltaAngles.Length - a - 1] * Mathf.Rad2Deg);
+                        diff += Mathf.Abs(deltaAngle);
+                    }
+
+                    diff /= deltaAngles.Length;
+
+                    if (diff < minDiff)
+                    {
+                        minDiff = diff;
+                        minIndex = t;
+                    }
+                }
+            }
+
+            if (oppositeAngles)
+            {
+                for (int o = -maxOffset; o <= maxOffset; ++o)
+                {
+                    float diff = 0f;
+
+                    for (int a = 0; a < deltaAngles.Length; ++a)
+                    {
+                        float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[a] * Mathf.Rad2Deg);
+                        diff += Mathf.Abs(deltaAngle);
+                    }
+
+                    diff /= deltaAngles.Length;
+
+                    if (diff < minDiff)
+                    {
+                        minDiff = diff;
+                        minIndex = t;
+                    }
+                }
+
+                if (bothDirections)
+                {
+                    for (int o = -maxOffset; o <= maxOffset; ++o)
+                    {
+                        float diff = 0f;
+
+                        for (int a = 0; a < deltaAngles.Length; ++a)
+                        {
+                            float deltaAngle = Mathf.DeltaAngle(deltaAngles[a] * Mathf.Rad2Deg, -templateDeltaAngles[deltaAngles.Length - a - 1] * Mathf.Rad2Deg);
+                            diff += Mathf.Abs(deltaAngle);
+                        }
+
+                        diff /= deltaAngles.Length;
+
+                        if (diff < minDiff)
+                        {
+                            minDiff = diff;
+                            minIndex = t;
+                        }
+                    }
+                }
+            } */
+
+        }
+
+        Debug.Log("Result(a): " + GestureTemplates.templateNames[minIndex] + " [" + minIndex + "], Score:" + minDiff);
+
+        return minIndex;
     }
 }

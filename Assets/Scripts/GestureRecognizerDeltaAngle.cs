@@ -19,7 +19,7 @@ public class GestureRecognizerDeltaAngle : GestureRecognizer
         return gestureChosen;
     }
 
-    public int GestureMatch(List<Vector2> points)
+    public override int GestureMatch(List<Vector2> points)
     {
 
         float[] deltaAngles = GetDeltaAngles(points);
